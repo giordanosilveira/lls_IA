@@ -1,0 +1,38 @@
+x = 8, y = 6, rule = B3/S23
+bbbbbbbb$
+bbbbbbbb$
+bbboobbb$
+bbbbobbb$
+bbbbobbb$
+bbbbbbbb!
+x = 8, y = 6, rule = B3/S23
+bbbbbbbb$
+bbbbbbbb$
+bbboobbb$
+bbbbobbb$
+bbbbobbb$
+bbbbbbbb!
+UnsatisfiableUnsatisfiablex = 24, y = 22, rule = B3/S23
+bbbbbbbbbbbbbbbbbbbbbbbb$
+bbbbbbbbbbbbbbbbbbbbbbbb$
+bbbbobbobobbbobobboobbbb$
+bbobbboboooobobobbbbobbb$
+bboboobobobbbbbobbobbbbb$
+bbbbbbbbobobbbbobbobbbbb$
+bboboobbobbooooobooobobb$
+bbobbbboobboobbbbbboobbb$
+bbbbbbooobobbbbobobobbbb$
+bbbbobbbbbbobbboobboobbb$
+bbobbobbboooobobbboobbbb$
+bbbobobobbbobobbboboobbb$
+bbbbboboobbboobbooobbbbb$
+bbobbbooobboobbbboobbobb$
+bbbbboobbbobbbbobbbbbbbb$
+bbbooobbbobbbbbboboobbbb$
+bbbbbbbobbbboboooobooobb$
+bbobobboboobbobobooobbbb$
+bbbbbbobbbbbobbbbbbobbbb$
+bbboobbbboobbbboobbbbbbb$
+bbbbbbbbbbbbbbbbbbbbbbbb$
+bbbbbbbbbbbbbbbbbbbbbbbb!
+Unsatisfiable

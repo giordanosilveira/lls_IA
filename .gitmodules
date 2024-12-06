@@ -1,0 +1,3 @@
+[submodule "logic-life-search"]
+	path = logic-life-search
+	url = https://gitlab.com/OscarCunningham/logic-life-search.git
