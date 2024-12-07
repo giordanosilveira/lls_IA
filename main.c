@@ -238,7 +238,7 @@ int main(int argc, char *argv[]){
         free(t1_board);
         exit(EXIT_FAILURE);
     }
-    fclose(file_t1_board);
+    fclose(sat_solver_file);
     popen_result = popen("./logic-life-search-master/lls temp/sat_solver_file.txt -o saida.txt", "r");
 
     t0_board = get_output_result(popen_result, rows, columns);
@@ -248,7 +248,13 @@ int main(int argc, char *argv[]){
         pclose(popen_result);
     }
 
+    
     print_board("Tabuleiro em t0", t0_board, rows, columns);
+    
+    free(t1_board[0]);
+    free(t1_board);
+    free(t0_board[0]);
+    free(t0_board);
     pclose(popen_result);
 
 
