@@ -3,8 +3,8 @@
 #include <string.h>
 #include <unistd.h>
 
-#define NUMBER_OF_LINE_TO_UNSAT 15
-#define NUMBER_OF_LINE_TO_RESULT 16
+#define NUMBER_OF_LINE_TO_UNSAT 14
+#define NUMBER_OF_LINE_TO_RESULT 15
 
 void get_path_pattern(char *src_board, char *path) {
     sprintf(src_board, "patterns/%s", path);
@@ -68,9 +68,9 @@ int **allocate_memory_to_board(int rows, int columns){
     return board;
 }
 
-void print_board(int **board, int rows, int columns) {
+void print_board(const char * string, int **board, int rows, int columns) {
 
-    fprintf(stdout, "\nTabuleiro:\n");
+    fprintf(stdout, "\n%s:\n", string);
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < columns; ++j){
             fprintf(stdout, "%d ", board[i][j]);
@@ -154,24 +154,63 @@ FILE *create_sat_solver_file(int **t1_board, char *src_sat_solver_file, int rows
 int **get_output_result(FILE *popen_result, int rows, int columns) {
     char popen_buffer[256];
 
+    int rows_result, columns_result;
     int i = 1;
-    // Lê a saída do comando linha por linha
+
+    int **board = allocate_memory_to_board(rows, columns);
+
+    //Lê a saída do comando linha por linha
     while (fgets(popen_buffer, sizeof(popen_buffer), popen_result) != NULL) {
         if (i == NUMBER_OF_LINE_TO_UNSAT) {
             if (strcmp(popen_buffer, "Unsatisfiable") == 0) {
+                free(board[0]);
+                free(board);
                 fprintf(stderr, "O tabuleiro é UNSAT\n");
                 return NULL;
             }
         }
 
-        if (i == NUMBER_OF_LINE_TO_RESULT) {
-
+        else if (i == NUMBER_OF_LINE_TO_RESULT) {
+            if (sscanf(popen_buffer, "x = %d, y = %d", &columns_result, &rows_result) != 2) {
+                free(board[0]);
+                free(board);
+                fprintf(stderr, "Erro ao processar as dimensões da nova matriz\n");
+                return NULL;
+            }   
         }
 
-        printf("%s", buffer); // Imprime cada linha
-    }
-    int **board = allocate_memory_to_board(rows, columns);
+        
+        else if (i > NUMBER_OF_LINE_TO_RESULT) {
+            // Processar as linhas restantes
+            for (int i = 1; i < rows_result  - 1; i++) {
+                if (fgets(popen_buffer, sizeof(popen_buffer), popen_result) == NULL) {
+                    perror("Erro ao ler a linha da matriz");
+                    free(board[0]);
+                    free(board);
+                    return NULL;
+                }
+                
+                // Processar cada coluna útil
+                for (int j = 0; j < columns_result; j++) {
+                    if (popen_buffer[j] == '$' || popen_buffer[j] == '!') {
+                        break; // Ignorar os caracteres especiais
+                    }
 
+                    // Ignorar a primeira e última coluna
+                    if (j == 0 || j == columns_result - 1) continue;
+
+                    board[i - 1][j - 1] = popen_buffer[j] == 'b' ? 0 : 1;
+                }
+                memset(popen_buffer, '\0', sizeof(popen_buffer));
+            }
+            return board;
+        }
+        // Limpar o buffer
+        memset(popen_buffer, '\0', sizeof(popen_buffer));
+        i++;
+    }
+    
+    return board;
 }
 
 int main(int argc, char *argv[]){
@@ -190,7 +229,7 @@ int main(int argc, char *argv[]){
     file_t1_board = open_file(src_board);
     
     t1_board = read_file(file_t1_board, &rows, &columns);
-    print_board(t1_board, rows, columns);
+    print_board("Tabuleiro em t1", t1_board, rows, columns);
     fclose(file_t1_board);
     
     sat_solver_file = create_sat_solver_file(t1_board, src_sat_solver_file, rows, columns);
@@ -200,11 +239,16 @@ int main(int argc, char *argv[]){
         exit(EXIT_FAILURE);
     }
     fclose(file_t1_board);
-    popen_result = popen("./logic-life-search/lls temp/sat_solver_file.txt -p", "r");
+    popen_result = popen("./logic-life-search-master/lls temp/sat_solver_file.txt -o saida.txt", "r");
 
-    t0_board = get_output_result(popen_result);
+    t0_board = get_output_result(popen_result, rows, columns);
+    if (! t0_board) {
+        free(t1_board[0]);
+        free(t1_board);
+        pclose(popen_result);
+    }
 
-
+    print_board("Tabuleiro em t0", t0_board, rows, columns);
     pclose(popen_result);
 
 

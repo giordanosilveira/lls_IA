@@ -1,38 +1,117 @@
+0,0,0,1,0,0
+0,0,0,1,0,0
+0,0,0,1,1,0
+0,0,0,0,0,0
+x = 8, y = 6, rule = B3/S23
+bbbbbbbb$
+bbobbobb$
+bbbbobbb$
+bbbobbbb$
+bobbboob$
+bbbbbbbb!
 x = 8, y = 6, rule = B3/S23
 bbbbbbbb$
 bbbbbbbb$
+bboobobb$
+bbbbobbb$
+bobobbob$
+bbbbbbbb!
+x = 8, y = 6, rule = B3/S23
+bbbbbbbb$
+bbbbobbb$
+bbbbobbb$
+bbbboobb$
+bbbbbbbb$
+bbbbbbbb!
+x = 8, y = 6, rule = B3/S23
+bbbbbbbb$
+bbbbbbob$
+boobobbb$
+bbbboobb$
+boobbbbb$
+bbbbbbbb!
+x = 8, y = 6, rule = B3/S23
+bbbbbbbb$
+bobbbbob$
 bbboobbb$
+bbbbobob$
+bbobbbbb$
+bbbbbbbb!
+x = 8, y = 6, rule = B3/S23
+bbbbbbbb$
 bbbbobbb$
 bbbbobbb$
+bbbboobb$
+bbbbbbbb$
+bbbbbbbb!
+x = 8, y = 6, rule = B3/S23
+bbbbbbbb$
+bbbobbob$
+bbbbobbb$
+bbbobbbb$
+bobbboob$
+bbbbbbbb!
+x = 8, y = 6, rule = B3/S23
+bbbbbbbb$
+bbbbobbb$
+bbbbobbb$
+bbbboobb$
+bbbbbbbb$
+bbbbbbbb!
+x = 8, y = 6, rule = B3/S23
+bbbbbbbb$
+bobobbbb$
+bobobbob$
+bbbbobbb$
+bbbbbobb$
+bbbbbbbb!
+x = 8, y = 6, rule = B3/S23
+bbbbbbbb$
+bobobbbb$
+bobobbob$
+bbbbobbb$
+bbbbbobb$
 bbbbbbbb!
 x = 8, y = 6, rule = B3/S23
 bbbbbbbb$
 bbbbbbbb$
 bbboobbb$
 bbbbobbb$
-bbbbobbb$
+bbobbbob$
 bbbbbbbb!
-UnsatisfiableUnsatisfiablex = 24, y = 22, rule = B3/S23
-bbbbbbbbbbbbbbbbbbbbbbbb$
-bbbbbbbbbbbbbbbbbbbbbbbb$
-bbbbobbobobbbobobboobbbb$
-bbobbboboooobobobbbbobbb$
-bboboobobobbbbbobbobbbbb$
-bbbbbbbbobobbbbobbobbbbb$
-bboboobbobbooooobooobobb$
-bbobbbboobboobbbbbboobbb$
-bbbbbbooobobbbbobobobbbb$
-bbbbobbbbbbobbboobboobbb$
-bbobbobbboooobobbboobbbb$
-bbbobobobbbobobbboboobbb$
-bbbbboboobbboobbooobbbbb$
-bbobbbooobboobbbboobbobb$
-bbbbboobbbobbbbobbbbbbbb$
-bbbooobbbobbbbbboboobbbb$
-bbbbbbbobbbboboooobooobb$
-bbobobboboobbobobooobbbb$
-bbbbbbobbbbbobbbbbbobbbb$
-bbboobbbboobbbboobbbbbbb$
-bbbbbbbbbbbbbbbbbbbbbbbb$
-bbbbbbbbbbbbbbbbbbbbbbbb!
-Unsatisfiable
+x = 8, y = 6, rule = B3/S23
+bbbbbbbb$
+bbbbobbb$
+bbbbobbb$
+bbbboobb$
+bbbbbbbb$
+bbbbbbbb!
+x = 8, y = 6, rule = B3/S23
+bbbbbbbb$
+bbbobbbb$
+bbbbobbb$
+bbbobbbb$
+bobbboob$
+bbbbbbbb!
+x = 11, y = 10, rule = B3/S23
+bbbbbbbbbbb$
+boobbbbbobb$
+bbbbobbobbb$
+bbbbobobbbb$
+boboobbboob$
+bobobobbbbb$
+bbboobbooob$
+bobbbbbbbbb$
+bbbbbooboob$
+bbbbbbbbbbb!
+x = 11, y = 10, rule = B3/S23
+bbbbbbbbbbb$
+bbbobbbobob$
+bbbbbbbbbbb$
+bbbooooobob$
+bbbbbooobbb$
+bbobbbbbobb$
+bbbbbobbbbb$
+bbboobbobob$
+bobbbbobbbb$
+bbbbbbbbbbb!
