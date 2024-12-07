@@ -80,7 +80,7 @@ void print_board(const char * string, int **board, int rows, int columns) {
 
 }
 
-int **read_file(FILE *file, int *rows, int *columns) {
+int **read_file(FILE *file, int *qty_one, int *rows, int *columns) {
     
     // Lê as dimensões da matriz
     if (fscanf(file, "%d %d", rows, columns) != 2) {
@@ -106,6 +106,7 @@ int **read_file(FILE *file, int *rows, int *columns) {
                 fclose(file);
                 exit(EXIT_FAILURE);
             }
+            if (cell) (*qty_one) += 1;
             board[i][j] = cell;
         }
     }
@@ -151,7 +152,7 @@ FILE *create_sat_solver_file(int **t1_board, char *src_sat_solver_file, int rows
     
 }
 
-int **get_output_result(FILE *popen_result, int rows, int columns) {
+int **get_output_result(FILE *popen_result, int *one_qty, int rows, int columns) {
     char popen_buffer[256];
 
     int rows_result, columns_result;
@@ -198,8 +199,12 @@ int **get_output_result(FILE *popen_result, int rows, int columns) {
 
                     // Ignorar a primeira e última coluna
                     if (j == 0 || j == columns_result - 1) continue;
+                    
+                    int cell_value = popen_buffer[j] == 'b' ? 0 : 1;
 
-                    board[i - 1][j - 1] = popen_buffer[j] == 'b' ? 0 : 1;
+                    if (cell_value) (*one_qty) += 1;
+
+                    board[i - 1][j - 1] = cell_value;
                 }
                 memset(popen_buffer, '\0', sizeof(popen_buffer));
             }
@@ -213,6 +218,169 @@ int **get_output_result(FILE *popen_result, int rows, int columns) {
     return board;
 }
 
+int my_strcmp(char *s1, char *s2){
+    int i = 0;
+    while (s2[i] != '\0' && s2[i] == s1[i]){
+        fprintf(stderr, "%c ", s2[i]);
+        i++;
+    }
+    if (s2[i] == '\0') return 1;
+
+    return 0;
+}
+
+int go_to_line_file(FILE *file, char *popen_buffer, int go_to_line){
+    int i = 0;
+    
+    char *result = fgets(popen_buffer, sizeof(popen_buffer), file);
+    while (result != NULL && i != go_to_line){
+        i++;
+        result = fgets(popen_buffer, sizeof(popen_buffer), file);
+    }
+
+    if (result == NULL) {
+        return 0; 
+    }
+
+    return 1;
+}
+
+int firsts_tries_to_minimize(int one_qty_t0, int *max_cell_value) {
+
+    FILE *popen_result;
+    char p_buffer[32];
+    char command_buffer[128];
+    char popen_buffer[256];
+    int number_cell_alives = one_qty_t0/2;
+    int old_cell_alive_number = one_qty_t0; 
+    int i;
+
+    sprintf(p_buffer, "-p \"<=%d\"", number_cell_alives);
+    sprintf(command_buffer, "./logic-life-search-master/lls temp/sat_solver_file.txt %s", p_buffer);
+    popen_result = popen(command_buffer, "r");
+
+    if (! go_to_line_file(popen_result, popen_buffer, NUMBER_OF_LINE_TO_UNSAT)) {
+        fprintf(stderr, "O resultado do popen está incorreto\n");
+        pclose(popen_result);
+        return -1;
+    }
+
+    while (! my_strcmp(popen_buffer, "Unsatisfiable")) {
+        old_cell_alive_number = number_cell_alives;
+        number_cell_alives = one_qty_t0 - (number_cell_alives/2);
+        sprintf(p_buffer, "-p \"<=%d\"", number_cell_alives);
+        sprintf(command_buffer, "./logic-life-search-master/lls temp/sat_solver_file.txt %s", p_buffer);
+        popen_result = popen(command_buffer, "r");
+        
+        if (! go_to_line_file(popen_result, popen_buffer, NUMBER_OF_LINE_TO_UNSAT)) {
+            fprintf(stderr, "O resultado do popen está incorreto\n");
+            pclose(popen_result);
+            return -1;
+        } 
+    }
+
+    pclose(popen_result);
+    (*max_cell_value) = old_cell_alive_number;
+    return number_cell_alives;
+}
+
+int **__minimize(int *min_cell_alive, int max_cell_alive, int rows, int columns){
+
+    int new_max_cell_value = max_cell_alive;
+    int new_min_cell_alive = (max_cell_alive + (*min_cell_alive))/2;
+
+    FILE *popen_result;
+    char p_buffer[32];
+    char command_buffer[128];
+    char popen_buffer[256];
+
+    int columns_result, rows_result;
+
+
+    sprintf(p_buffer, "-p \"<=%d\"", new_min_cell_alive);
+    sprintf(command_buffer, "./logic-life-search-master/lls temp/sat_solver_file.txt %s", p_buffer);
+    popen_result = popen(command_buffer, "r");
+
+    if (! go_to_line_file(popen_result, popen_buffer, NUMBER_OF_LINE_TO_UNSAT)) {
+        fprintf(stderr, "O resultado do popen está incorreto\n");
+        pclose(popen_result);
+        return -1;
+    }
+
+    while (! my_strcmp(popen_buffer, "Unsatisfiable") && max_cell_alive > min_cell_alive) {
+        int old_value = new_min_cell_alive;
+        int new_min_cell_alive = (max_cell_alive + *min_cell_alive)/2;
+        if (old_value == new_min_cell_alive){
+            new_max_cell_value += 1;
+        }
+
+        sprintf(p_buffer, "-p \"<=%d\"", new_min_cell_alive);
+        sprintf(command_buffer, "./logic-life-search-master/lls temp/sat_solver_file.txt %s", p_buffer);
+        
+        popen_result = popen(command_buffer, "r");
+        if (! go_to_line_file(popen_result, popen_buffer, NUMBER_OF_LINE_TO_UNSAT)) {
+            fprintf(stderr, "O resultado do popen está incorreto\n");
+            pclose(popen_result);
+            return -1;
+        } 
+
+    }
+
+    if (! go_to_line_file(popen_result, popen_buffer, NUMBER_OF_LINE_TO_RESULT)) {
+        fprintf(stderr, "O resultado do popen está incorreto\n");
+        pclose(popen_result);
+        return -1;
+    }
+
+    if (sscanf(popen_buffer, "x = %d, y = %d", &columns_result, &rows_result) != 2) {
+        fprintf(stderr, "Erro ao processar as dimensões da nova matriz\n");
+        return NULL;
+    }
+
+    int **board = allocate_memory_to_board(rows, columns);
+
+    for (int i = 0; i < rows_result  - 1; i++) {
+        if (fgets(popen_buffer, sizeof(popen_buffer), popen_result) == NULL) {
+            perror("Erro ao ler a linha da matriz");
+            free(board[0]);
+            free(board);
+            return NULL;
+        }
+
+        if (i == 0) continue;
+        
+        // Processar cada coluna útil
+        for (int j = 0; j < columns_result; j++) {
+            if (popen_buffer[j] == '$' || popen_buffer[j] == '!') {
+                break; // Ignorar os caracteres especiais
+            }
+
+            // Ignorar a primeira e última coluna
+            if (j == 0 || j == columns_result - 1) continue;
+            
+            int cell_value = popen_buffer[j] == 'b' ? 0 : 1;
+            board[i - 1][j - 1] = cell_value;
+        }
+        memset(popen_buffer, '\0', sizeof(popen_buffer));
+    }
+    (*min_cell_alive) = new_min_cell_alive;
+    return board;
+
+
+}
+
+
+int **minimize_t0_board(int *one_min_qty_t0, int one_qty_t0, int rows, int columns){
+
+    int **board;
+    int min_cell_alive, max_cell_alive;
+    min_cell_alive = firsts_tries_to_minimize(one_qty_t0, &max_cell_alive);
+    board = __minimize(&min_cell_alive, max_cell_alive, rows, columns);
+    *one_min_qty_t0 = min_cell_alive;
+    return board;
+
+}
+
 int main(int argc, char *argv[]){
 
     
@@ -220,7 +388,9 @@ int main(int argc, char *argv[]){
     char src_sat_solver_file[64];
     int **t1_board;
     int **t0_board;
+    int **t0_min_board;
     int rows, columns;
+    int one_qty_t0 = 0, one_min_qty_t0 = 0, one_qty_t1 = 0;
     FILE *file_t1_board;
     FILE *popen_result;
     FILE *sat_solver_file;
@@ -228,8 +398,9 @@ int main(int argc, char *argv[]){
     get_options(argc, argv, src_board);
     file_t1_board = open_file(src_board);
     
-    t1_board = read_file(file_t1_board, &rows, &columns);
+    t1_board = read_file(file_t1_board, &one_qty_t1, &rows, &columns);
     print_board("Tabuleiro em t1", t1_board, rows, columns);
+    fprintf(stdout, "Quantidade de 1's no tabuleio t1: %d\n", one_qty_t1);
     fclose(file_t1_board);
     
     sat_solver_file = create_sat_solver_file(t1_board, src_sat_solver_file, rows, columns);
@@ -239,9 +410,9 @@ int main(int argc, char *argv[]){
         exit(EXIT_FAILURE);
     }
     fclose(sat_solver_file);
-    popen_result = popen("./logic-life-search-master/lls temp/sat_solver_file.txt -o saida.txt", "r");
+    popen_result = popen("./logic-life-search-master/lls temp/sat_solver_file.txt", "r");
 
-    t0_board = get_output_result(popen_result, rows, columns);
+    t0_board = get_output_result(popen_result, &one_qty_t0, rows, columns);
     if (! t0_board) {
         free(t1_board[0]);
         free(t1_board);
@@ -250,9 +421,16 @@ int main(int argc, char *argv[]){
 
     
     print_board("Tabuleiro em t0", t0_board, rows, columns);
+    fprintf(stdout, "Quantidade de 1's no tabuleio t0: %d\n", one_qty_t0);
+
+    t0_min_board = minimize_t0_board(&one_min_qty_t0, one_qty_t0, rows, columns);
+    print_board("Tabuleiro em t0 mínimo", t0_min_board, rows, columns);
+    fprintf(stdout, "Quantidade mínima de 1's no tabuleio t0: %d\n", one_min_qty_t0);
     
     free(t1_board[0]);
     free(t1_board);
+    free(t0_min_board[0]);
+    free(t0_min_board);
     free(t0_board[0]);
     free(t0_board);
     pclose(popen_result);

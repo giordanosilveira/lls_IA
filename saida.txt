@@ -115,3 +115,36 @@ bbbbbobbbbb$
 bbboobbobob$
 bobbbbobbbb$
 bbbbbbbbbbb!
+x = 11, y = 10, rule = B3/S23
+bbbbbbbbbbb$
+boobobobbbb$
+bbbbbbbbobb$
+bbbbobbbobb$
+bobobobobbb$
+bboobbbbbbb$
+bbbooobooob$
+bobbbbbbbbb$
+bbbbbboboob$
+bbbbbbbbbbb!
+x = 11, y = 10, rule = B3/S23
+bbbbbbbbbbb$
+bbobbbbbobb$
+bbbbobbobbb$
+bobbobobbbb$
+bbboobbboob$
+bobobobbbbb$
+bbboobbooob$
+bbobbbbbbbb$
+bbbboboobbb$
+bbbbbbbbbbb!
+x = 11, y = 10, rule = B3/S23
+bbbbbbbbbbb$
+bbobbbbobob$
+bbobbbbobob$
+bbbbooobbbb$
+bboboobobbb$
+bbbbbobbbbb$
+bbboobbooob$
+bbobbbbbbbb$
+bbbboboobbb$
+bbbbbbbbbbb!
